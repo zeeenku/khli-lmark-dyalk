@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { SubmissionForm } from "@/components/submission-form"
 import { PostFeed } from "@/components/post-feed"
@@ -36,10 +37,14 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4 max-w-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <h1 className="text-xl font-bold text-primary">Be Proud</h1>
+                <Image alt="logo" width={40} height={40} src="./logo.svg" 
+                className="w-10 h-10 text-primary-foreground" />
+                <div>
+                  <h1 className="text-xl font-bold text-primary">Khli l'Mark Dyalk</h1>
+                  <h2 className="text-sm font-bold text-muted-foreground">Made by 
+                    <span className="text-foreground"> Enafs</span>
+                  </h2>
+                </div>
             </div>
             <ThemeToggle />
           </div>
@@ -49,40 +54,36 @@ export default function HomePage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="space-y-4">
-          {/* Input Area */}
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
+          {/* Combined Input Area */}
+          <Card className="p-6 md:px-16">
+            <div className="text-center space-y-4">
+              <div>
+                <h1 className="text-2xl font-bold text-primary mb-2">Partagi m3ana</h1>
+                <p className="text-muted-foreground">Ayi project, khdma, injaz...
+                  o contributi m3a <span className="font-semibold text-primary">{posts.length}</span> etudiants akhryn khlaw lmark dylhom
+                </p>
+              </div>          
+              <div className="text-sm text-muted-foreground">
+                Anpartagiw kolchi anonymously f page instagram dyalna
               </div>
+              
+              {/* Input/Form Area */}
               {isRegistered ? (
-                <Button 
-                  className="flex-1 justify-start bg-muted hover:bg-accent text-muted-foreground hover:text-foreground"
-                  onClick={() => {
-                    const form = document.getElementById('submission-form')
-                    if (form) {
-                      form.scrollIntoView({ behavior: 'smooth' })
-                    }
-                  }}
-                >
-                  Leave your mark...
-                </Button>
+                <SubmissionForm onSubmit={handleNewPost} />
               ) : (
-                <Link href="/register" className="flex-1">
-                  <Button className="w-full justify-start bg-muted hover:bg-accent text-muted-foreground hover:text-foreground">
-                    Join the community! Register to share your achievements, projects, and thoughts anonymously
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary rounded-full flex items-center overflow-hidden justify-center">
+                    <Image alt="logo" width={40} height={40} src="./logo.svg" />
+                  </div>
+                  <Link href="/register" className="flex-1">
+                    <Button className="w-full justify-start bg-muted hover:bg-accent text-muted-foreground hover:text-foreground">
+                      We are proud of you...
+                    </Button>
+                  </Link>
+                </div>
               )}
             </div>
           </Card>
-
-          {/* Post Form - Only for logged in users */}
-          {isRegistered && (
-            <div id="submission-form">
-              <SubmissionForm onSubmit={handleNewPost} />
-            </div>
-          )}
 
           {/* Posts Feed */}
           <PostFeed posts={posts} />
