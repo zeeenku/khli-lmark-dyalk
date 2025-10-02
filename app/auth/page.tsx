@@ -7,9 +7,10 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { register, login, formatPhoneNumber, validatePhoneNumber, getPosts } from "@/lib/auth"
+import { register, login, formatPhoneNumber, validatePhoneNumber, getPosts, getCurrentUser } from "@/lib/auth"
 import { ArrowLeft, Sparkles, Shield, Zap } from "lucide-react"
 import Image from "next/image"
+import { toast } from "sonner"
 
 export default function AuthPage() {
   const router = useRouter()
@@ -18,13 +19,33 @@ export default function AuthPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
   const [postsCount, setPostsCount] = useState(0)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+
+  // Check if user is already logged in and redirect
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const user = await getCurrentUser()
+        if (user) {
+          // toast.success("rk deja msjl m3ana!")
+          router.push("/")
+          return
+        }
+      } catch (error) {
+        // User not logged in, continue normally
+      } finally {
+        setIsCheckingAuth(false)
+      }
+    }
+    checkAuthStatus()
+  }, [])
 
   // Load posts count on component mount
   useEffect(() => {
     const loadPostsCount = async () => {
       try {
         const posts = await getPosts()
-        setPostsCount(posts.length)
+        setPostsCount(new Set(posts.map(p => p.userId)).size)
       } catch (error) {
         console.error('Error loading posts count:', error)
       }
@@ -53,24 +74,42 @@ export default function AuthPage() {
       // Try to login first
       try {
         await login(phone)
+        toast.success("Welcome back! 👋")
         router.push("/")
         return
       } catch (loginError) {
         // If login fails, try to register
         try {
           await register(name.trim(), phone)
+          toast.success("Mr7ba biiiiik! 🎉")
           router.push("/")
           return
         } catch (registerError) {
           // If both fail, show error
-          setError(registerError instanceof Error ? registerError.message : "Authentication failed")
+          const errorMessage = registerError instanceof Error ? registerError.message : "Authentication failed"
+          setError(errorMessage)
+          toast.error(errorMessage)
         }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed")
+      const errorMessage = err instanceof Error ? err.message : "Authentication failed"
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground">Checking authentication...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

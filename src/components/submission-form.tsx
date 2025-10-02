@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { createPost } from "@/lib/auth"
 import { Sparkles } from "lucide-react"
+import { toast } from "sonner"
 
 interface SubmissionFormProps {
   onSubmit: () => void
@@ -25,9 +26,11 @@ export function SubmissionForm({ onSubmit }: SubmissionFormProps) {
     try {
       await createPost(content.trim())
       setContent("")
+      toast.success("Post shared successfully! 🎉")
       onSubmit()
     } catch (error) {
       console.error('Error creating post:', error)
+      toast.error("Failed to create post. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -53,13 +56,21 @@ export function SubmissionForm({ onSubmit }: SubmissionFormProps) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>{content.length}/500</span>
         </div>
-        <Button
-          type="submit"
-          disabled={!content.trim() || isSubmitting}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground px-6"
-        >
-          {isSubmitting ? "🎉 Posting..." : "🎉 Partager"}
-        </Button>
+        <div className="relative group">
+          <Button
+            type="submit"
+            disabled={!content.trim() || isSubmitting}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 disabled:opacity-50"
+          >
+            {isSubmitting ? "🎉 Posting..." : "🎉 Partager"}
+          </Button>
+          {!content.trim() && !isSubmitting && (
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground text-xs px-3 py-2 rounded-md shadow-lg border opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+              Write something to share...
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-popover"></div>
+            </div>
+          )}
+        </div>
       </div>
     </form>
   )

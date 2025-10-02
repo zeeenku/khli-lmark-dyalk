@@ -4,15 +4,15 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { Toaster } from "sonner"
 import "./globals.css"
 import localFont from "next/font/local";
 
 const coolvetica = localFont({
   src: [
     {
-      path: "../public/CoolveticaRg-It.otf",
+      path: "./CoolveticaRg-It.otf",
       weight: "400",
-      style: "italic",
     },
   ],
   variable: "--font-coolvetica",
@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning  className={`font-sans ${GeistSans.variable} ${coolvetica.variable} `}>
+    <html lang="en" suppressHydrationWarning  className={` ${coolvetica.variable} `}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -50,6 +50,7 @@ export default function RootLayout({
 
       <body>
         <Suspense fallback={null}>{children}</Suspense>
+        <Toaster position="top-center" richColors />
         <Analytics />
       </body>
     </html>

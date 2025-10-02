@@ -1,20 +1,20 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
+import { PostCard } from "@/components/post-card"
 import type { Post } from "@/lib/auth"
-import { generateAvatarColor, getInitials, getTimeAgo } from "@/lib/avatar-generator"
-import { Heart } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { toggleReaction, getCurrentUser, getUserLikedPosts } from "@/lib/auth"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 interface PostFeedProps {
   posts: Post[]
   isLoading?: boolean
+  onClearState?: () => void
 }
 
-export function PostFeed({ posts, isLoading = false }: PostFeedProps) {
+export function PostFeed({ posts, isLoading = false, onClearState }: PostFeedProps) {
   const [postLikes, setPostLikes] = useState<Record<string, number>>({})
   const [userLikes, setUserLikes] = useState<Record<string, boolean>>({})
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
@@ -93,8 +93,16 @@ export function PostFeed({ posts, isLoading = false }: PostFeedProps) {
       // Update with actual result from server
       setPostLikes(prev => ({ ...prev, [postId]: result.likes }))
       setUserLikes(prev => ({ ...prev, [postId]: result.liked }))
+      
+      // Show toast notification
+      if (result.liked) {
+        toast.success("Post liked! 👍")
+      } else {
+        toast.success("Like removed")
+      }
     } catch (error) {
       console.error('Error toggling reaction:', error)
+      toast.error("Failed to update like")
       // Revert optimistic update on error
       const post = posts.find(p => p.id === postId)
       if (post) {
@@ -107,79 +115,18 @@ export function PostFeed({ posts, isLoading = false }: PostFeedProps) {
   return (
     <div className="space-y-4">
       {posts.map((post) => {
-        const avatarColor = generateAvatarColor(post.anonymousName)
-        const initials = getInitials(post.anonymousName)
-        const timeAgo = getTimeAgo(new Date(post.createdAt))
         const likes = postLikes[post.id] ?? post.likes
         const isLiked = userLikes[post.id] ?? false
 
         return (
-          <Card key={post.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20 bg-gradient-to-br from-card to-card/50">
-            {/* Post Header */}
-            <div className="p-5 flex items-center gap-4">
-              <div className={`w-14 h-14 rounded-full ${avatarColor} flex items-center justify-center shadow-lg ring-2 ring-primary/10`}>
-                <span className="text-white font-bold text-lg">{initials}</span>
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="font-bold text-lg text-foreground">{post.anonymousName}</p>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                </div>
-                <p className="text-sm text-muted-foreground font-medium">{timeAgo}</p>
-              </div>
-              <div className="text-primary/60 text-2xl">⋯</div>
-            </div>
-
-            {/* Post Content */}
-            <div className="px-5 pb-5">
-              <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-4 rounded-xl border border-primary/10">
-                <p className="text-foreground leading-relaxed text-[16px] font-medium">{post.content}</p>
-              </div>
-            </div>
-
-            {/* Engagement Bar */}
-            <div className="border-t border-border/50 px-3 py-3 bg-muted/30">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleLike(post.id)}
-                className={`w-full hover:bg-primary/10 transition-all duration-200 rounded-xl h-12 ${
-                  isLiked 
-                    ? 'text-primary bg-primary/10' 
-                    : 'text-muted-foreground hover:text-primary'
-                }`}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3">
-                    <Heart className={`w-5 h-5 transition-transform duration-200 ${isLiked ? 'fill-current scale-110' : 'hover:scale-110'}`} />
-                    <span className="font-semibold text-sm">
-                      {isLiked ? 'Liked' : 'Like this post'}
-                    </span>
-                  </div>
-                  
-                  {likes > 0 && (
-                    <div className="flex items-center gap-2">
-                      <div className="flex -space-x-1">
-                        {Array.from({ length: Math.min(likes, 3) }).map((_, i) => (
-                          <div key={i} className="w-5 h-5 bg-primary rounded-full border-2 border-card flex items-center justify-center">
-                            <span className="text-xs text-primary-foreground">👍</span>
-                          </div>
-                        ))}
-                        {likes > 3 && (
-                          <div className="w-5 h-5 bg-muted rounded-full border-2 border-card flex items-center justify-center">
-                            <span className="text-xs text-muted-foreground">+{likes - 3}</span>
-                          </div>
-                        )}
-                      </div>
-                      <span className="text-sm font-medium text-muted-foreground">
-                        {likes} {likes === 1 ? 'like' : 'likes'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </Button>
-            </div>
-          </Card>
+          <PostCard
+            key={post.id}
+            post={post}
+            isLiked={isLiked}
+            likes={likes}
+            onLike={handleLike}
+            isLoggedIn={isLoggedIn ?? false}
+          />
         )
       })}
     </div>
