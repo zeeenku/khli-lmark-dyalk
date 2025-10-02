@@ -5,6 +5,20 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
+import localFont from "next/font/local";
+
+const coolvetica = localFont({
+  src: [
+    {
+      path: "../public/CoolveticaRg-It.otf",
+      weight: "400",
+      style: "italic",
+    },
+  ],
+  variable: "--font-coolvetica",
+});
+
+
 
 export const metadata: Metadata = {
   title: "Anonymous Submissions",
@@ -18,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning  className={`font-sans ${GeistSans.variable} ${coolvetica.variable} `}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -33,7 +47,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+
+      <body>
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />
       </body>

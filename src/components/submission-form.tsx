@@ -6,7 +6,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
-import { addPost, getCurrentUserId } from "@/lib/storage"
+import { createPost } from "@/lib/auth"
 import { Sparkles } from "lucide-react"
 
 interface SubmissionFormProps {
@@ -22,13 +22,15 @@ export function SubmissionForm({ onSubmit }: SubmissionFormProps) {
     if (!content.trim()) return
 
     setIsSubmitting(true)
-    const userId = getCurrentUserId()
-    if (userId) {
-      addPost(content, userId)
+    try {
+      await createPost(content.trim())
       setContent("")
       onSubmit()
+    } catch (error) {
+      console.error('Error creating post:', error)
+    } finally {
+      setIsSubmitting(false)
     }
-    setIsSubmitting(false)
   }
 
   return (
@@ -39,7 +41,7 @@ export function SubmissionForm({ onSubmit }: SubmissionFormProps) {
         </div>
         <Textarea
           id="submission"
-          placeholder="We are proud of you..."
+          placeholder="We are proud of you... 💙"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="flex-1 min-h-10 resize-none text-[15px] border-0 bg-muted rounded-full px-4 py-3 focus:ring-2 focus:ring-primary focus:outline-none"
@@ -47,7 +49,7 @@ export function SubmissionForm({ onSubmit }: SubmissionFormProps) {
         />
       </div>
       
-      <div className="flex items-center justify-between pt-2 border-t border-border">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>{content.length}/500</span>
         </div>
@@ -56,7 +58,7 @@ export function SubmissionForm({ onSubmit }: SubmissionFormProps) {
           disabled={!content.trim() || isSubmitting}
           className="bg-primary hover:bg-primary/90 text-primary-foreground px-6"
         >
-          {isSubmitting ? "Posting..." : "Share"}
+          {isSubmitting ? "🎉 Posting..." : "🎉 Partager"}
         </Button>
       </div>
     </form>

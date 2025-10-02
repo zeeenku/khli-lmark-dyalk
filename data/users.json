@@ -1,0 +1,23 @@
+[
+  {
+    "id": "dummy-user-1",
+    "name": "Anonymous User",
+    "phone": "+212612345678",
+    "username": "collectivefrontierman845",
+    "createdAt": "2025-10-02T00:11:01.148Z"
+  },
+  {
+    "id": "c7cd8b7a-102b-43e4-b370-f37b6d1b0a0e",
+    "name": "Zakariaa Enajjachi",
+    "phone": "+212687080398",
+    "username": "creativeentrepreneur",
+    "createdAt": "2025-10-02T00:39:25.764Z"
+  },
+  {
+    "id": "60c3d1df-f4b0-4592-a305-5283b27f8877",
+    "name": "Ziiiko",
+    "phone": "+212987049982",
+    "username": "collectivefrontiersman85",
+    "createdAt": "2025-10-02T00:47:11.976Z"
+  }
+]

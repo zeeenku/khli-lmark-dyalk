@@ -1,0 +1,42 @@
+[
+  {
+    "id": "c57d516a-595f-4b6f-9d4e-89edb554a27b",
+    "content": "I love foootball",
+    "userId": "60c3d1df-f4b0-4592-a305-5283b27f8877",
+    "anonymousName": "collectivefrontiersman85",
+    "createdAt": "2025-10-02T01:10:25.241Z",
+    "likes": 0
+  },
+  {
+    "id": "abe6317e-c055-4d3e-8c1e-b60101175815",
+    "content": "I love soccccccccer",
+    "userId": "60c3d1df-f4b0-4592-a305-5283b27f8877",
+    "anonymousName": "collectivefrontiersman85",
+    "createdAt": "2025-10-02T00:47:39.966Z",
+    "likes": 1
+  },
+  {
+    "id": "dummy-post-1",
+    "content": "I played professional football at 15yo, It was the best days of my life",
+    "userId": "dummy-user-1",
+    "anonymousName": "collectivefrontierman845",
+    "createdAt": "2025-09-30T00:11:01.151Z",
+    "likes": 12
+  },
+  {
+    "id": "dummy-post-2",
+    "content": "I made a small stickers business to support myself",
+    "userId": "dummy-user-1",
+    "anonymousName": "collectivefrontierman845",
+    "createdAt": "2025-10-01T00:11:01.152Z",
+    "likes": 8
+  },
+  {
+    "id": "dummy-post-3",
+    "content": "I won an AI hackathon",
+    "userId": "dummy-user-1",
+    "anonymousName": "collectivefrontierman845",
+    "createdAt": "2025-10-01T18:11:01.152Z",
+    "likes": 15
+  }
+]

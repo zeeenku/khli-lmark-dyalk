@@ -8,22 +8,48 @@ import { Button } from "@/components/ui/button"
 import { SubmissionForm } from "@/components/submission-form"
 import { PostFeed } from "@/components/post-feed"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { getPosts, isUserRegistered, type Post } from "@/lib/storage"
-import { Sparkles } from "lucide-react"
+import { getCurrentUser, getPosts, logout, type Post, type User } from "@/lib/auth"
+import { LogOut } from "lucide-react"
 
 export default function HomePage() {
   const [posts, setPosts] = useState<Post[]>([])
-  const [isRegistered, setIsRegistered] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     setMounted(true)
-    setPosts(getPosts())
-    setIsRegistered(isUserRegistered())
+    loadData()
   }, [])
 
+  const loadData = async () => {
+    try {
+      setIsLoading(true)
+      const [postsData, userData] = await Promise.all([
+        getPosts(),
+        getCurrentUser()
+      ])
+      setPosts(postsData)
+      setUser(userData)
+    } catch (error) {
+      console.error('Error loading data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleNewPost = () => {
-    setPosts(getPosts())
+    loadData()
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      setUser(null)
+      loadData()
+    } catch (error) {
+      console.error('Error logging out:', error)
+    }
   }
 
   if (!mounted) {
@@ -37,16 +63,28 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4 max-w-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-                <Image alt="logo" width={40} height={40} src="./logo.svg" 
-                className="w-10 h-10 text-primary-foreground" />
-                <div>
-                  <h1 className="text-xl font-bold text-primary">Khli l'Mark Dyalk</h1>
-                  <h2 className="text-sm font-bold text-muted-foreground">Made by 
-                    <span className="text-foreground"> Enafs</span>
-                  </h2>
-                </div>
+              <Image alt="logo" width={40} height={40} src="./logo.svg" 
+              className="w-10 h-10 text-primary-foreground" />
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold text-primary">Khli l'Mark Dyalk</h1>
+                <h2 className="text-xs md:text-sm font-bold text-muted-foreground">Made by 
+                  <span className="text-foreground"> Enafs</span>
+                </h2>
+              </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              {user && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="w-10 h-10 hover:bg-accent/50"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -55,38 +93,44 @@ export default function HomePage() {
       <main className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="space-y-4">
           {/* Combined Input Area */}
-          <Card className="p-6 md:px-16">
-            <div className="text-center space-y-4">
-              <div>
-                <h1 className="text-2xl font-bold text-primary mb-2">Partagi m3ana</h1>
-                <p className="text-muted-foreground">Ayi project, khdma, injaz...
-                  o contributi m3a <span className="font-semibold text-primary">{posts.length}</span> etudiants akhryn khlaw lmark dylhom
-                </p>
-              </div>          
-              <div className="text-sm text-muted-foreground">
-                Anpartagiw kolchi anonymously f page instagram dyalna
-              </div>
-              
-              {/* Input/Form Area */}
-              {isRegistered ? (
-                <SubmissionForm onSubmit={handleNewPost} />
-              ) : (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary rounded-full flex items-center overflow-hidden justify-center">
-                    <Image alt="logo" width={40} height={40} src="./logo.svg" />
-                  </div>
-                  <Link href="/register" className="flex-1">
-                    <Button className="w-full justify-start bg-muted hover:bg-accent text-muted-foreground hover:text-foreground">
-                      We are proud of you...
-                    </Button>
-                  </Link>
-                </div>
-              )}
+        <Card className="p-6 md:p-10 rounded-2xl shadow-sm border border-border bg-gradient-to-b from-background to-muted/40">
+          <div className="space-y-6 text-center md:text-left">
+            {/* Heading */}
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-primary mb-2">
+                Partagi m3ana <span className="bg-gradient-to-r from-primary to-yellow-400 bg-clip-text text-transparent">Ayi Project, Khadma, Injaz... dertih</span>
+              </h1>
+              <p className="text-muted-foreground text-sm md:text-base">
+                Kima <span className="font-semibold text-primary">{posts.length}</span> étudiants akhryn khlaw lmark dyalhom 🌟
+              </p>
             </div>
-          </Card>
+
+            {/* Alert / Info Box */}
+            <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 px-4 py-3 text-sm text-primary font-medium">
+              📢 Anpartagiw kolchi <span className="underline decoration-dotted">anonymously</span> f page Instagram dyalna  
+            </div>
+
+            {/* Input/Form Area */}
+            {user ? (
+              <SubmissionForm onSubmit={handleNewPost} />
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-primary/90 rounded-full flex items-center justify-center overflow-hidden shadow-md">
+                  <Image alt="logo" width={36} height={36} src="./logo.svg" />
+                </div>
+                <Link href="/auth" className="flex-1">
+                  <Button className="w-full justify-start bg-gradient-to-r from-muted to-accent/20 hover:from-accent/30 hover:to-muted text-muted-foreground hover:text-foreground transition-all rounded-xl">
+                    We are proud of you... 💙
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </Card>
+
 
           {/* Posts Feed */}
-          <PostFeed posts={posts} />
+          <PostFeed posts={posts} isLoading={isLoading} />
         </div>
       </main>
     </div>
