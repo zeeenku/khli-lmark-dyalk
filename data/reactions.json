@@ -1,23 +1,2 @@
 [
-  {
-    "id": "79d57303-ea6b-4841-b072-e33703d93e20",
-    "postId": "abe6317e-c055-4d3e-8c1e-b60101175815",
-    "userId": "60c3d1df-f4b0-4592-a305-5283b27f8877",
-    "type": "like",
-    "createdAt": "2025-10-02T01:00:41.017Z"
-  },
-  {
-    "id": "39db718c-09b0-4482-967a-e080c8d92551",
-    "postId": "c57d516a-595f-4b6f-9d4e-89edb554a27b",
-    "userId": "60c3d1df-f4b0-4592-a305-5283b27f8877",
-    "type": "like",
-    "createdAt": "2025-10-02T01:12:58.094Z"
-  },
-  {
-    "id": "af4cfd32-7373-47f5-94cb-397c35dfdfe6",
-    "postId": "c57d516a-595f-4b6f-9d4e-89edb554a27b",
-    "userId": "e78eb271-b7fd-4cce-9a14-6b1cf9027618",
-    "type": "like",
-    "createdAt": "2025-10-02T01:38:36.397Z"
-  }
 ]

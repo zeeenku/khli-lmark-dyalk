@@ -142,8 +142,8 @@ export default function HomePage() {
               <SubmissionForm onSubmit={handleNewPost} />
             ) : (
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 bg-primary/90 rounded-full flex items-center justify-center overflow-hidden shadow-md">
-                  <Image alt="logo" width={36} height={36} src="./logo.svg" />
+                <div className="w-10 h-10 p-0 bg-primary/90 rounded-full flex items-center justify-center overflow-hidden shadow-md">
+                  <Image alt="logo" width={40} height={40} src="./logo.svg" />
                 </div>
                 <Link href="/auth" className="flex-1">
                   <Button className="w-full justify-start bg-gradient-to-r from-muted to-accent/20 hover:from-accent/30 hover:to-muted text-muted-foreground hover:text-foreground transition-all rounded-xl">
@@ -160,7 +160,7 @@ export default function HomePage() {
           {!isLoading && posts.length > 0 && (
             <div className="flex items-center justify-between px-2 py-2">
               <h2 className="text-lg font-semibold text-foreground">
-                Akhir Lposts ({posts.length})
+                Akhir Posts ({posts.length})
               </h2>
             </div>
           )}

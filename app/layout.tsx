@@ -6,17 +6,6 @@ import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Toaster } from "sonner"
 import "./globals.css"
-import localFont from "next/font/local";
-
-const coolvetica = localFont({
-  src: [
-    {
-      path: "./CoolveticaRg-It.otf",
-      weight: "400",
-    },
-  ],
-  variable: "--font-coolvetica",
-});
 
 
 
@@ -32,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning  className={` ${coolvetica.variable} `}>
+    <html lang="en" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
